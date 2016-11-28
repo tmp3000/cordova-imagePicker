@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2012, David Erosa
  *
- * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following  conditions are met:
@@ -696,6 +695,8 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
         double logBaseTwo = (int)(Math.log(sampleSize) / Math.log(2));
         return (int)Math.pow(logBaseTwo + 1, 2);
     }
+
+
     
     private float calculateScale(int width, int height) {
         float widthScale = 1.0f;
