@@ -77,6 +77,13 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import android.os.Build;
+import android.content.pm.PackageManager;
+import android.Manifest;
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class MultiImageChooserActivity extends Activity implements OnItemClickListener,
         LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "ImagePicker";
@@ -123,6 +130,29 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
         super.onCreate(savedInstanceState);
         fakeR = new FakeR(this);
         setContentView(fakeR.getId("layout", "multiselectorgrid"));
+
+
+          boolean permission_granted = true;
+
+         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+              int hasReadExternalStoragePermission = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+              List<String> m_permissions = new ArrayList<String>();
+              if (hasReadExternalStoragePermission != PackageManager.PERMISSION_GRANTED) {
+                  m_permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+                  permission_granted = false;
+             }
+              if (m_permissions.size() > 0){
+                  String[] m_permissions_string = new String[m_permissions.size()];
+                  m_permissions.toArray(m_permissions_string);
+                  requestPermissions(m_permissions_string, 1001);
+              }
+          }
+          if (permission_granted){
+              proceedLoading();
+          }
+      }
+
+     private void proceedLoading(){
         fileNames.clear();
 
         maxImages = getIntent().getIntExtra(MAX_IMAGES_KEY, NOLIMIT);
@@ -693,4 +723,17 @@ public class MultiImageChooserActivity extends Activity implements OnItemClickLi
         
         return scale;
     }
+
+
+         @Override
+         public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+             if (requestCode == 1001){
+                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                     proceedLoading();
+                 } else {
+                     finish();
+                 }
+                 return;
+            }
+         }
 }
